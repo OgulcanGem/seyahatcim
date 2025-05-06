@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ziyaret Planlayıcı</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Şehir Ziyaret Planlayıcı</h1>
+
+    <label>Yıl Seç:</label>
+    <select id="yearSelect">
+      <option>2025</option>
+      <option>2026</option>
+      <option>2027</option>
+      <option>2028</option>
+    </select>
+
+    <label>Ülke Seç:</label>
+    <select id="countrySelect" style="width:100%"></select>
+
+    <label>Şehir Seç:</label>
+    <select id="citySelect" style="width:100%"></select>
+
+    <button onclick="getSuggestion()">🔍 En Uygun Tarihi Öner</button>
+
+    <div id="resultArea"></div>
+  </div>
+  <footer style="text-align: center; padding: 15px; background-color: #f8f8f8; color: #d10000; font-size: 18px; margin-top: 30px;">
+    ❤️ Ali Hoca'yı çok seviyoruz ❤️
+  </footer>
+  
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='data/countries.json') }}"></script>
+
+</body>
+</html>
