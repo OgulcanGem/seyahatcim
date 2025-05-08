@@ -80,12 +80,6 @@ function renderStars(score) {
 }
 
 function renderResults(data) {
-  const holidayNote = data["Resmi Tatil"]?.toLowerCase().includes("evet")
-    ? `<div style="background:#ffdede; padding:10px; margin-top:10px; border-left:5px solid red;">
-         📅 <strong>O gün resmi tatildir!</strong><br>${data["Resmi Tatil"]}
-       </div>`
-    : "";
-
   document.getElementById("resultArea").innerHTML = `
     <h3>📆 Önerilen Ziyaret Tarihi: <span style="color:#007BFF;">${data["Tarih"]}</span></h3>
     <ul style="list-style:none; padding-left:0;">
@@ -93,6 +87,5 @@ function renderResults(data) {
       <li>🌤️ Hava Skoru: ${renderStars(data["Hava Durumu Skoru"])}</li>
       <li>👥 Kalabalık Skoru: ${renderStars(data["Kalabalık Skoru"])}</li>
     </ul>
-    ${holidayNote}
   `;
 }
