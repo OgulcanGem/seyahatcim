@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
-# Groq API anahtarı
+# ✅ Groq API anahtarını buraya yapıştır
 GROQ_API_KEY = "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"
 
 @app.route('/')
@@ -17,7 +17,18 @@ def get_suggestion():
     country = data.get("country")
     city = data.get("city")
 
-    def call_groq_api(prompt):
+    prompt = f"""
+Kullanıcı {year} yılında {country} ülkesindeki {city} şehrini ziyaret etmek istiyor.
+Lütfen AŞAĞIDAKİ ŞEKİLDE CEVAP VER (Aynı format, başka hiçbir şey yazma):
+
+Tarih: YYYY-MM-DD  
+Fiyat Skoru: [0-10]  
+Hava Durumu Skoru: [0-10]  
+Kalabalık Skoru: [0-10]  
+Resmi Tatil: (Evet/Hayır ve varsa tatil ismi)
+"""
+
+    try:
         url = "https://api.groq.com/openai/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -30,32 +41,27 @@ def get_suggestion():
         }
 
         response = requests.post(url, headers=headers, json=payload)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": f"API hatası: {response.status_code} - {response.text}"}
 
-    base_prompt = f"""
-Kullanıcı {year} yılında {country} ülkesindeki {city} şehrini ziyaret etmek istiyor.
-Lütfen AŞAĞIDAKİ ŞEKİLDE CEVAP VER (Aynı format, başka hiçbir şey yazma):
+        # HTTP 200 kontrolü
+        if response.status_code != 200:
+            return jsonify({
+                "success": False,
+                "error": f"Groq API hatası: {response.status_code} - {response.text}"
+            })
 
-Tarih: YYYY-MM-DD  
-Fiyat Skoru: [0-10]  
-Hava Durumu Skoru: [0-10]  
-Kalabalık Skoru: [0-10]  
-Resmi Tatil: (Evet/Hayır ve varsa tatil ismi)
-"""
+        result = response.json()
 
-    for _ in range(3):
-        result = call_groq_api(base_prompt)
         if "choices" in result and result["choices"]:
             message = result["choices"][0]["message"]["content"]
-            if "Resmi Tatil: Hayır" in message:
-                return jsonify({"success": True, "message": message})
+            return jsonify({"success": True, "message": message})
         else:
-            return jsonify({"success": False, "error": result.get("error", "Bilinmeyen hata.")})
+            return jsonify({
+                "success": False,
+                "error": "Groq API yanıtında 'choices' bulunamadı."
+            })
 
-    return jsonify({"success": False, "error": "Uygun bir gün bulunamadı. Lütfen daha sonra tekrar deneyin."})
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Sunucu hatası: {str(e)}"})
 
 if __name__ == '__main__':
     app.run(debug=True)
